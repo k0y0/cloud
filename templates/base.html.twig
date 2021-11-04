@@ -2,18 +2,57 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {# Run `composer require symfony/webpack-encore-bundle`
-           and uncomment the following Encore helpers to start using Symfony UX #}
+        <title>{% block title %}Home Cloud System{% endblock %}</title>
         {% block stylesheets %}
-            {#{{ encore_entry_link_tags('app') }}#}
+            <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.css') }}">
+            <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
         {% endblock %}
 
         {% block javascripts %}
-            {#{{ encore_entry_script_tags('app') }}#}
+            <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+            <script src="{{ asset('assets/js/jquery-3.6.0.min.js') }}"></script>
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% if app.user %}{{ path("dashboard") }}{% else %}{{ path("app_login") }}{% endif %}">HomeDrive</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    {% if app.user %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path("dashboard") }}">Strona Główna</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Moje Pliki</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Udostępnione</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Ustawienia</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path("app_logout") }}">Wyloguj się</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path("app_login") }}">Zaloguj się</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="page_wrapper">
+        {% block body %}
+        {% endblock %}
+    </div>
+    <div id="foot">
+
+    </div>
     </body>
 </html>
