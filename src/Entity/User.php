@@ -6,11 +6,13 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields={"email"}, message="Istnieje konto w systemie o podanym email")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -42,9 +44,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $files;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=File::class, mappedBy="shared")
+     */
+    private $shared;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isVerified = false;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $diskLimit;
+
     public function __construct()
     {
         $this->files = new ArrayCollection();
+        $this->shared = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -162,6 +180,57 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $file->setOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|File[]
+     */
+    public function getShared(): Collection
+    {
+        return $this->shared;
+    }
+
+    public function addShared(File $shared): self
+    {
+        if (!$this->shared->contains($shared)) {
+            $this->shared[] = $shared;
+            $shared->addShared($this);
+        }
+
+        return $this;
+    }
+
+    public function removeShared(File $shared): self
+    {
+        if ($this->shared->removeElement($shared)) {
+            $shared->removeShared($this);
+        }
+
+        return $this;
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getDiskLimit(): ?string
+    {
+        return $this->diskLimit;
+    }
+
+    public function setDiskLimit(string $diskLimit): self
+    {
+        $this->diskLimit = $diskLimit;
 
         return $this;
     }

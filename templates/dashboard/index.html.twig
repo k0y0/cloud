@@ -3,18 +3,24 @@
 {% block title %}Hello DashboardController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="container">
+        <div id="uploader-form" class="">
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+            {{ form_start(form) }}
+            {{ form_row(form.filename, ) }}
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'D:/sites/cloud.local/cloud/src/Controller/DashboardController.php'|file_link(0) }}">src/Controller/DashboardController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'D:/sites/cloud.local/cloud/templates/dashboard/index.html.twig'|file_link(0) }}">templates/dashboard/index.html.twig</a></code></li>
-    </ul>
-</div>
+            <button type="submit" class="btn btn-outline-dark">Prześlij</button>
+            {{ form_end(form) }}
+        </div>
+        <div id="info">
+
+            <span>Wolna przestrzeń: {{ userSpaceInfo.left|round(2)}}{{ userSpaceInfo.format  }}</span>
+            <div class="progress">
+                <div class="progress-bar" style="width:{{ userSpaceInfo.percent }}%" role="progressbar" aria-valuemin="0" aria-valuemax="100">{{ userSpaceInfo.percent }}%</div>
+            </div>
+        </div>
+        <div>
+            {{ dump(userSpaceInfo) }}
+        </div>
+    </div>
 {% endblock %}

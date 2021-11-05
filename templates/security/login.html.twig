@@ -5,6 +5,11 @@
 {% block body %}
 <div class="container pt-5 pb-5">
     <div class="login-form-wrapper">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
         <form method="post">
             {% if error %}
                 <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
@@ -27,6 +32,10 @@
             <button class="btn btn-lg btn-primary mt-2" type="submit">
                 Zaloguj
             </button>
+            <p>
+                Nie masz konta?
+                <a class="" href="{{ path("app_register") }}">Zarejestruj się</a>
+            </p>
         </form>
     </div>
 </div>

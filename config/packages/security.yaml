@@ -21,6 +21,7 @@ security:
             lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\LoginFormAuthenticator
+            user_checker: App\Security\UserChecker
             logout:
                 path: app_logout
                 # where to redirect after logout
@@ -36,6 +37,8 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/verify/*, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/*, role: ROLE_USER }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }

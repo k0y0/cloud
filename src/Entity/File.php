@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FileRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -46,6 +48,16 @@ class File
      * @ORM\Column(type="string", length=255)
      */
     private $filesize;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="shared")
+     */
+    private $shared;
+
+    public function __construct()
+    {
+        $this->shared = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -120,6 +132,30 @@ class File
     public function setFilesize(string $filesize): self
     {
         $this->filesize = $filesize;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getShared(): Collection
+    {
+        return $this->shared;
+    }
+
+    public function addShared(User $shared): self
+    {
+        if (!$this->shared->contains($shared)) {
+            $this->shared[] = $shared;
+        }
+
+        return $this;
+    }
+
+    public function removeShared(User $shared): self
+    {
+        $this->shared->removeElement($shared);
 
         return $this;
     }

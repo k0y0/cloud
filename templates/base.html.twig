@@ -36,17 +36,24 @@
                             <a class="nav-link" href="#">Ustawienia</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path("app_logout") }}">Wyloguj się</a>
+                            <a class="nav-link" href="{{ path("app_logout") }}">Wyloguj</a>
                         </li>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path("app_login") }}">Zaloguj się</a>
-                        </li>
+                        {% if app.request.get('_route') == 'app_register' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path("app_login") }}">Logowanie</a>
+                            </li>
+                        {% endif %}
                     {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
+    <div id="alert-section">
+        {% for flash in app.flashes('message') %}
+            <div class="alert alert-dark" role="alert">{{ flash }}</div>
+        {% endfor %}
+    </div>
     <div id="page_wrapper">
         {% block body %}
         {% endblock %}
