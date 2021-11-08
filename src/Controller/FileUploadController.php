@@ -37,6 +37,7 @@ class FileUploadController extends AbstractController
                     $en->setFilesize($file->getSize());
                     $en->setMimeType($file->guessExtension());
                     $en->setOwner($user);
+                    $en->setIsShared(false);
                     $en->setPath("newpath");
                     $en->setUploadetAt(new \DateTimeImmutable());
 

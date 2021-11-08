@@ -22,6 +22,7 @@ class UserFixtures extends Fixture
         $user->setEmail("admin@localhost.local");
         $user->setPassword($this->passwordEncoder->encodePassword( $user, "secret_Pass123"));
         $user->setRoles(["ROLE_ADMIN"]);
+        $user->setIsVerified(1);
         $user->setDiskLimit("no_limit");
         $manager->persist($user);
         $manager->flush();

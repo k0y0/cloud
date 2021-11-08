@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Setting;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
@@ -41,8 +42,14 @@ class RegistrationController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
-
+            //set settings for user
             $entityManager = $this->getDoctrine()->getManager();
+            $setting = $entityManager->getRepository(Setting::class)->findOneBy(["settingName" => "default_user_disk_limit"]);
+            if(!empty($entityManager)){
+                $user->setDiskLimit($setting->getSettingValue());
+            }
+            //set role
+            $user->setRoles(["ROLE_USER"]);
             $entityManager->persist($user);
             $entityManager->flush();
 

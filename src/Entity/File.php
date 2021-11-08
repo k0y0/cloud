@@ -54,6 +54,11 @@ class File
      */
     private $shared;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isShared;
+
     public function __construct()
     {
         $this->shared = new ArrayCollection();
@@ -156,6 +161,18 @@ class File
     public function removeShared(User $shared): self
     {
         $this->shared->removeElement($shared);
+
+        return $this;
+    }
+
+    public function getIsShared(): ?bool
+    {
+        return $this->isShared;
+    }
+
+    public function setIsShared(bool $isShared): self
+    {
+        $this->isShared = $isShared;
 
         return $this;
     }

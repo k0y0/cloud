@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Home Cloud System{% endblock %}</title>
+        <title>{% block title %}Home Drive System{% endblock %}</title>
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.css') }}">
             <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
@@ -16,7 +16,7 @@
     <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="{% if app.user %}{{ path("dashboard") }}{% else %}{{ path("app_login") }}{% endif %}">HomeDrive</a>
+            <a class="navbar-brand" href="{% if app.user %}{{ path("dashboard") }}{% else %}{{ path("app_login") }}{% endif %}">Panel Administratora</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -24,19 +24,13 @@
                 <ul class="navbar-nav">
                     {% if app.user %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path("dashboard") }}">Strona Główna</a>
+                            <a class="nav-link" href="#">Statystyki</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path("my_files") }}">Moje Pliki</a>
+                            <a class="nav-link" href="{{ path("admin_settings") }}">System</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path("shares") }}">Udostępnione</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Ustawienia</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path("app_logout") }}">Wyloguj</a>
+                            <a class="nav-link" href="{{ path("dashboard") }}">Wyjście</a>
                         </li>
                     {% else %}
                         {% if app.request.get('_route') == 'app_register' %}
@@ -54,15 +48,6 @@
             <div class="alert alert-dark" role="alert">{{ flash }}</div>
         {% endfor %}
     </div>
-    {% if userSpaceInfo %}
-        <div id="info">
-            <span>Wolna przestrzeń: </span>
-            <span>{{ userSpaceInfo.left.number|round(2)}}{{ userSpaceInfo.left.unit  }}</span>
-            <div class="progress">
-                <div class="progress-bar" style="width:{{ userSpaceInfo.percent }}%" role="progressbar" aria-valuemin="0" aria-valuemax="100">{{ userSpaceInfo.percent }}%</div>
-            </div>
-        </div>
-    {% endif %}
     <div id="page_wrapper">
         {% block body %}
         {% endblock %}
