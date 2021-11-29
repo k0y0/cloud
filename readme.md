@@ -1,4 +1,7 @@
-
+DO PRACY
+/** 
+https://fs.siteor.com/ecdl/files/RODZAJE_BAZ_DANYCH_I_ICH_BUDOWA.pdf?1289369360
+**/
 (1) Wstęp
 
 Tworząc system na wzór popularnych serwisów typu cloud jak (google drive)(dropbox) Na sam początek zbadałem rynek i porównałem serwisy do siebie.
