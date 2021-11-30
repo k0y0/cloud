@@ -1,6 +1,8 @@
 DO PRACY
 /** 
 https://fs.siteor.com/ecdl/files/RODZAJE_BAZ_DANYCH_I_ICH_BUDOWA.pdf?1289369360
+
+http://www.bartilevi.pl/Documents/Praca%20dyplomowa.pdf
 **/
 (1) Wstęp
 
