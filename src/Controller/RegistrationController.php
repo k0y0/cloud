@@ -45,7 +45,7 @@ class RegistrationController extends AbstractController
             //set settings for user
             $entityManager = $this->getDoctrine()->getManager();
             $setting = $entityManager->getRepository(Setting::class)->findOneBy(["settingName" => "default_user_disk_limit"]);
-            if(!empty($entityManager)){
+            if(!empty($setting)){
                 $user->setDiskLimit($setting->getSettingValue());
             }
             //set role

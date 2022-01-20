@@ -59,10 +59,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $diskLimit;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Folder::class, mappedBy="owner", orphanRemoval=true)
+     */
+    private $folders;
+
     public function __construct()
     {
         $this->files = new ArrayCollection();
         $this->shared = new ArrayCollection();
+        $this->folders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -231,6 +237,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setDiskLimit(string $diskLimit): self
     {
         $this->diskLimit = $diskLimit;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Folder[]
+     */
+    public function getFolders(): Collection
+    {
+        return $this->folders;
+    }
+
+    public function addFolder(Folder $folder): self
+    {
+        if (!$this->folders->contains($folder)) {
+            $this->folders[] = $folder;
+            $folder->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFolder(Folder $folder): self
+    {
+        if ($this->folders->removeElement($folder)) {
+            // set the owning side to null (unless already changed)
+            if ($folder->getOwner() === $this) {
+                $folder->setOwner(null);
+            }
+        }
 
         return $this;
     }

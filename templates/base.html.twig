@@ -27,7 +27,7 @@
                             <a class="nav-link" href="{{ path("dashboard") }}">Strona Główna</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path("my_files") }}">Moje Pliki</a>
+                            <a class="nav-link" href="{{ path("folder") }}">Moje Pliki</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path("shares") }}">Udostępnione</a>
@@ -54,7 +54,8 @@
             <div class="alert alert-dark" role="alert">{{ flash }}</div>
         {% endfor %}
     </div>
-    {% if userSpaceInfo %}
+    {% if userSpaceInfo is defined  %}
+        {% if userSpaceInfo.display %}
         <div id="info">
             <span>Wolna przestrzeń: </span>
             <span>{{ userSpaceInfo.left.number|round(2)}}{{ userSpaceInfo.left.unit  }}</span>
@@ -62,6 +63,11 @@
                 <div class="progress-bar" style="width:{{ userSpaceInfo.percent }}%" role="progressbar" aria-valuemin="0" aria-valuemax="100">{{ userSpaceInfo.percent }}%</div>
             </div>
         </div>
+        {% else %}
+            <div>
+                <span>Nielimitowana przestrzeń</span>
+            </div>
+        {% endif %}
     {% endif %}
     <div id="page_wrapper">
         {% block body %}

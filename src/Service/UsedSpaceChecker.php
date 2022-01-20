@@ -12,11 +12,13 @@ class UsedSpaceChecker
     {
         $files = $user->getFiles();
         $allFilesSize = 0;
+        $display = true;
         foreach ($files as $file){
             $allFilesSize += (int)$file->getFilesize();
         }
         $limit = $user->getDiskLimit();
         if($limit === "no_limit"){
+            $display = false;
             $spaceLeft = 0;
             $percent = 0;
         }else{
@@ -33,6 +35,7 @@ class UsedSpaceChecker
             "files"   => SizesHelper::getOptimalSize($allFilesSize),
             "left"   => SizesHelper::getOptimalSize($spaceLeft),
             "percent" => $percent,
+            "display" => $display
         );
     }
 }

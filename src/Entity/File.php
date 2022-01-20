@@ -59,6 +59,11 @@ class File
      */
     private $isShared;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Folder::class, inversedBy="files")
+     */
+    private $folder;
+
     public function __construct()
     {
         $this->shared = new ArrayCollection();
@@ -173,6 +178,18 @@ class File
     public function setIsShared(bool $isShared): self
     {
         $this->isShared = $isShared;
+
+        return $this;
+    }
+
+    public function getFolder(): ?Folder
+    {
+        return $this->folder;
+    }
+
+    public function setFolder(?Folder $folder): self
+    {
+        $this->folder = $folder;
 
         return $this;
     }
