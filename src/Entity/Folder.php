@@ -45,9 +45,15 @@ class Folder
      */
     private $files;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Package::class, mappedBy="folders")
+     */
+    private $packages;
+
     public function __construct()
     {
         $this->files = new ArrayCollection();
+        $this->packages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -128,6 +134,33 @@ class Folder
             if ($file->getFolder() === $this) {
                 $file->setFolder(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Package[]
+     */
+    public function getPackages(): Collection
+    {
+        return $this->packages;
+    }
+
+    public function addPackage(Package $package): self
+    {
+        if (!$this->packages->contains($package)) {
+            $this->packages[] = $package;
+            $package->addFolder($this);
+        }
+
+        return $this;
+    }
+
+    public function removePackage(Package $package): self
+    {
+        if ($this->packages->removeElement($package)) {
+            $package->removeFolder($this);
         }
 
         return $this;

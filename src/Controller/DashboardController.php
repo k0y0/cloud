@@ -11,6 +11,7 @@ use App\Helper\SizesHelper;
 use App\Service\UsedSpaceChecker;
 use phpDocumentor\Reflection\Types\Collection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,10 +29,17 @@ class DashboardController extends AbstractController
         $user = $em->getRepository(User::class)->find($this->getUser());
         $e = $this->getUser();
 
+
+
+        $recentFiles = $em->getRepository(File::class)->findRecentFiles($user);
+        $favourite = $em->getRepository(File::class)->findBy(["isFavourite" => true, "owner" => $user]);
+
         $userSpace = $usc->getUsedSpace($user);
         return $this->render('dashboard/index.html.twig', [
             'userSpaceInfo' => $userSpace,
             'form' => $form->createView(),
+            'recentFiles' => $recentFiles,
+            'favourite' => $favourite
         ]);
     }
 
@@ -69,6 +77,7 @@ class DashboardController extends AbstractController
      */
     public function folder(UsedSpaceChecker $usc, $id = false): Response
     {
+        $formUpload = $this->createForm(FileUploadType::class, null, ['action' => $this->generateUrl("upload")]);
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository(User::class)->find($this->getUser());
         if(empty($id)){
@@ -107,6 +116,11 @@ class DashboardController extends AbstractController
                     }
                 }
             }else{
+
+
+                $formUpload->add('folderId', HiddenType::class, [
+                    'data' => $mainFolder->getId(),
+                ]);
                 if($user != $mainFolder->getOwner()){
                     //todo: message?
                     return new RedirectResponse($this->generateUrl("folder"));
@@ -118,6 +132,7 @@ class DashboardController extends AbstractController
 
                 $folders = $user->getFolders();
                 $dirFolders = array();
+
 
                 foreach ($folders as $single){
                     if($single->getParent() == $mainFolder){
@@ -133,6 +148,7 @@ class DashboardController extends AbstractController
                 'files' =>  $onlyFilesInFolder,
                 'folders' => $dirFolders,
                 'form' => $formFolder->createView(),
+                'formUpload' => $formUpload->createView()
             ]);
 
         }
@@ -150,19 +166,14 @@ class DashboardController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository(User::class)->find($this->getUser());
         /** @var $user User */
-        $files = $user->getFiles();
+        $packages = $user->getPackages();
         //first - get user used space array.
         $userSpace = $usc->getUsedSpace($user);
         //loop through items, keep shared
-        foreach ($files as $file)
-        {
-            if(!$file->getIsShared()){
-                $files->remove($files->key());
-            }
-        }
+
         return $this->render('dashboard/shares.html.twig', [
             'userSpaceInfo' => $userSpace,
-            'files' =>  $files,
+            'packages' =>  $packages,
         ]);
     }
 

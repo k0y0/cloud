@@ -64,11 +64,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $folders;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Package::class, mappedBy="ownerId", orphanRemoval=true)
+     */
+    private $packages;
+
     public function __construct()
     {
         $this->files = new ArrayCollection();
         $this->shared = new ArrayCollection();
         $this->folders = new ArrayCollection();
+        $this->packages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -265,6 +271,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($folder->getOwner() === $this) {
                 $folder->setOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Package[]
+     */
+    public function getPackages(): Collection
+    {
+        return $this->packages;
+    }
+
+    public function addPackage(Package $package): self
+    {
+        if (!$this->packages->contains($package)) {
+            $this->packages[] = $package;
+            $package->setOwnerId($this);
+        }
+
+        return $this;
+    }
+
+    public function removePackage(Package $package): self
+    {
+        if ($this->packages->removeElement($package)) {
+            // set the owning side to null (unless already changed)
+            if ($package->getOwnerId() === $this) {
+                $package->setOwnerId(null);
             }
         }
 

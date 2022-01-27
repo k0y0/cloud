@@ -64,9 +64,20 @@ class File
      */
     private $folder;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Package::class, mappedBy="files")
+     */
+    private $packages;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isFavourite;
+
     public function __construct()
     {
         $this->shared = new ArrayCollection();
+        $this->packages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -190,6 +201,50 @@ class File
     public function setFolder(?Folder $folder): self
     {
         $this->folder = $folder;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Package[]
+     */
+    public function getPackages(): Collection
+    {
+        return $this->packages;
+    }
+
+    public function addPackage(Package $package): self
+    {
+        if (!$this->packages->contains($package)) {
+            $this->packages[] = $package;
+            $package->addFile($this);
+        }
+
+        return $this;
+    }
+
+    public function removePackage(Package $package): self
+    {
+        if ($this->packages->removeElement($package)) {
+            $package->removeFile($this);
+        }
+
+        return $this;
+    }
+
+    public function delete(): void
+    {
+        $this->getPath();
+    }
+
+    public function getIsFavourite(): ?bool
+    {
+        return $this->isFavourite;
+    }
+
+    public function setIsFavourite(bool $isFavourite): self
+    {
+        $this->isFavourite = $isFavourite;
 
         return $this;
     }

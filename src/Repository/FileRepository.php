@@ -6,6 +6,7 @@ use App\Entity\File;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method File|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,6 +21,22 @@ class FileRepository extends ServiceEntityRepository
         parent::__construct($registry, File::class);
     }
 
+
+
+    private const NUMBER_OF_RECENT_FILES = 4;
+
+    public function findRecentFiles(User $user): array
+    {
+        $num = self::NUMBER_OF_RECENT_FILES;
+
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.owner = '.$user->getId())
+            ->orderBy('c.uploadetAt' , 'DESC')
+            ->setMaxResults(self::NUMBER_OF_RECENT_FILES)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 
     // /**
     //  * @return File[] Returns an array of File objects

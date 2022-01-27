@@ -29,9 +29,9 @@ class FolderController extends AbstractController
         $form->handleRequest($request);
 
         $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(User::class)->find($this->getUser());
 
-
-        if($user = $this->getUser()){
+        if($user){
             if($form->isSubmitted()){
                 $manager = $this->getDoctrine()->getManager();
                 $folder = new Folder();
@@ -59,5 +59,48 @@ class FolderController extends AbstractController
             }
         }
         return new RedirectResponse($this->generateUrl('app_login'));
+    }
+
+
+    /**
+     * @Route("delete/folder/{id}", name="deleteFolder")
+     * @param int $id
+     * @return Response
+     */
+    public function deleteFolder(int $id): Response
+    {
+        if(!empty($id)){
+            $em = $this->getDoctrine()->getManager();
+            $folder = $em->getRepository(Folder::class)->find($id);
+            /** @var $folder Folder */
+            if(!empty($folder)){
+                if($folder->getOwner() === $this->getUser()){
+
+                    $this->del($folder);
+                    $em->flush();
+                }
+            }
+        }
+
+        return new RedirectResponse($this->generateUrl("folder"));
+    }
+
+    private function del(Folder $folder){
+        $em = $this->getDoctrine()->getManager();
+        $children = $em->getRepository(Folder::class)->findBy(["parent" => $folder->getId()]);
+
+        $files = $folder->getFiles();
+
+        if(!empty($children)){
+            foreach ($children as $child){
+                $this->del($child);
+            }
+        }
+        if(!empty($files)){
+            foreach ($files as $file){
+                $em->remove($file);
+            }
+        }
+        $em->remove($folder);
     }
 }
