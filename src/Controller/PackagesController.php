@@ -14,7 +14,7 @@ class PackagesController extends AbstractController
     /**
      * @Route("/packages/create", name="packagesCreate")
      */
-    public function index(): Response
+    public function create(): Response
     {
         $user = $this->getUser();
 
@@ -28,9 +28,10 @@ class PackagesController extends AbstractController
 
         $uid = bin2hex(random_bytes(16));
         $t = $em->getRepository(Share::class)->findOneBy(["uId"=>$uid]);
+
         while(!empty($t)){
             $uid = bin2hex(random_bytes(16));
-        $t = $em->getRepository(Share::class)->findOneBy(["uId"=>$uid]);
+            $t = $em->getRepository(Share::class)->findOneBy(["uId"=>$uid]);
         }
 
         $share->setUId($uid);

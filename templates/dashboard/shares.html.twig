@@ -7,7 +7,13 @@
         <div>
             <h1>paczki z plikami</h1>
             {% for package in packages %}
-                <h2>link do paczki: <a href="{{ path("openShare", {"uId" : package.shareLink.uid} ) }}">przejdź</a></h2>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>link do paczki: <a href="{{ path("openShare", {"uId" : package.shareLink.uid} ) }}">przejdź</a></h2>
+
+                    </div>
+                    <div class="card-body">
+
                 {% for file in package.files %}
                     <div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark" viewBox="0 0 16 16">
@@ -26,6 +32,8 @@
                         </a>
                     </div>
                 {% endfor %}
+                    </div>
+                </div>
             {% endfor %}
         </div>
     </div>

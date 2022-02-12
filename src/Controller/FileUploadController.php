@@ -4,17 +4,22 @@ namespace App\Controller;
 
 use App\Entity\File;
 use App\Entity\Folder;
+use App\Entity\Setting;
 use App\Form\FileUploadType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 class FileUploadController extends AbstractController
 {
+    private const FILES_DEFAULT_DIR = __DIR__."\\..\\..\\files\\";
+
     /**
      * @Route("/action/upload", name="upload")
      * @param Request $request
@@ -33,6 +38,23 @@ class FileUploadController extends AbstractController
                 $files = $form->get('filename')->getData();
                 $manager = $this->getDoctrine()->getManager();
                 $folderId = $form->get('folderId')->getData();
+                $setting = $manager->getRepository(Setting::class)->findOneBy(["settingName" => "custom_files_dir"]);
+
+                $diskFolderName = $user->getId();
+                if(!empty($setting)){
+                    /** @var $setting Setting */
+                    $dir = $setting->getSettingValue();
+                    if($dir == null){
+                        $dir = self::FILES_DEFAULT_DIR;
+                    }
+                }else{
+                    $dir = self::FILES_DEFAULT_DIR;
+                }
+
+                if(!is_dir($dir.$diskFolderName)){
+                    mkdir($dir.$diskFolderName);
+                }
+                $newPath = $dir.$diskFolderName;
 
                 foreach ($files as $file){
                     /** @var UploadedFile $file */
@@ -41,10 +63,24 @@ class FileUploadController extends AbstractController
                     $en->setFilename($file->getClientOriginalName());
                     $en->setFilesize($file->getSize());
                     $en->setMimeType($file->guessExtension());
+
                     $en->setOwner($user);
                     $en->setIsShared(false);
-                    $en->setPath("newpath");
+
+                    $filename = bin2hex(random_bytes(32));
+
+
+                    while(file_exists($newPath."\\".$filename.".".$file->getClientOriginalExtension())){
+                        $filename = bin2hex(random_bytes(32));
+                    }
+                    $file->move($newPath , $filename.".".$file->getClientOriginalExtension());
+
+                    $realpath = realpath($newPath."\\".$filename.".".$file->getClientOriginalExtension());
+
+                    $en->setPath($realpath);
                     $en->setIsFavourite(false);
+
+
                     $en->setUploadetAt(new \DateTimeImmutable());
                     if(!empty($folderId)){
                         $folder = $manager->getRepository(Folder::class)->find($folderId);
@@ -103,6 +139,7 @@ class FileUploadController extends AbstractController
         /** @var $file File */
         if(!empty($file)){
             if($file->getOwner() === $this->getUser()){
+                unlink($file->getPath());
                 $em->remove($file);
                 $em->flush();
             }
@@ -115,7 +152,7 @@ class FileUploadController extends AbstractController
      * @param int $id
      * @return Response
      */
-    public function addToFavourite($id): Response
+    public function addToFavourite(int $id): Response
     {
         $em = $this->getDoctrine()->getManager();
         $file = $em->getRepository(File::class)->find($id);
@@ -148,4 +185,29 @@ class FileUploadController extends AbstractController
         return new RedirectResponse($this->generateUrl('dashboard'));
     }
 
+    /**
+     * @Route("/action/downloadFile/{id}", name="downloadFile")
+     * @param int $id
+     * @return Response
+     */
+    public function downloadFile(int $id): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        $file = $em->getRepository(File::class)->find($id);
+        /** @var $file File */
+        if(!empty($file)){
+            if($file->getOwner() === $this->getUser()){
+                $response = new BinaryFileResponse($file->getPath());
+                $response->setContentDisposition(
+                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                    $file->getFilename()
+                );
+                return $response;
+            }
+
+            //todo: if file is shared for single person :P
+        }
+
+        return new RedirectResponse($this->generateUrl('dashboard'));
+    }
 }

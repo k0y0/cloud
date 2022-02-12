@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}HomeDrive - Ustawienia{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="card card-body w-50 mx-auto mt-5 text-center">
+            <h2>Profil</h2>
+            <h5>zmiana hasła</h5>
+            {{ form_start(form) }}
+            {{ form_row(form.plainPassword) }}
+                <input type="submit" class="btn btn-warning">
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

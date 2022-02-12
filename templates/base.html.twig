@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta charset="UTF-8">
         <title>{% block title %}Home Cloud System{% endblock %}</title>
         {% block stylesheets %}
@@ -24,16 +25,16 @@
                 <ul class="navbar-nav">
                     {% if app.user %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path("dashboard") }}">Strona Główna</a>
+                            <a class="nav-link {% if site is defined and site == "dashboard"%}active{% endif %}"  href="{{ path("dashboard") }} ">Strona Główna</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path("folder") }}">Moje Pliki</a>
+                            <a class="nav-link {% if site is defined and site == "folder"%}active{% endif %}" href="{{ path("folder") }}">Moje Pliki</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path("shares") }}">Udostępnione</a>
+                            <a class="nav-link {% if site is defined and site == "shares"%}active{% endif %}" href="{{ path("shares") }}">Udostępnione</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Ustawienia</a>
+                            <a class="nav-link {% if site is defined and site == "settings"%}active{% endif %}" href="{{ path("settings") }}">Ustawienia</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path("app_logout") }}">Wyloguj</a>

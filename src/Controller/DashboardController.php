@@ -7,13 +7,16 @@ use App\Entity\Folder;
 use App\Entity\User;
 use App\Form\FileUploadType;
 use App\Form\NewFolderType;
+use App\Form\PasswordChangeType;
 use App\Helper\SizesHelper;
 use App\Service\UsedSpaceChecker;
 use phpDocumentor\Reflection\Types\Collection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractController
@@ -39,6 +42,7 @@ class DashboardController extends AbstractController
             'userSpaceInfo' => $userSpace,
             'form' => $form->createView(),
             'recentFiles' => $recentFiles,
+            'site' => "dashboard",
             'favourite' => $favourite
         ]);
     }
@@ -147,6 +151,7 @@ class DashboardController extends AbstractController
                 'userSpaceInfo' => $userSpace,
                 'files' =>  $onlyFilesInFolder,
                 'folders' => $dirFolders,
+                'site' => "folder",
                 'form' => $formFolder->createView(),
                 'formUpload' => $formUpload->createView()
             ]);
@@ -154,8 +159,6 @@ class DashboardController extends AbstractController
         }
         return new RedirectResponse($this->generateUrl("folder"));
     }
-
-
 
 
     /**
@@ -174,7 +177,40 @@ class DashboardController extends AbstractController
         return $this->render('dashboard/shares.html.twig', [
             'userSpaceInfo' => $userSpace,
             'packages' =>  $packages,
+            'site' => "shares",
         ]);
     }
 
+    /**
+     * @Route("/settings", name="settings")
+     */
+    public function changePassword(Request $request, UserPasswordHasherInterface $userPasswordHasherInterface): Response
+    {
+        $form = $this->createForm(PasswordChangeType::class);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $first = $form->get("plainPassword")->get("first")->getData();
+            $sec = $form->get("plainPassword")->get("second")->getData();
+
+            $em = $this->getDoctrine()->getManager();
+            $user = $this->getUser();
+            $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($user);
+            if(!empty($user)){
+                /** @var $user User */
+
+                $user->setPassword($userPasswordHasherInterface->hashPassword($user, $first));
+                $em->persist($user);
+                $em->flush();
+
+                $this->addFlash('success', 'Pomyślnie zmieniono hasło.');
+            }
+        }
+
+        return $this->render('dashboard/settings.html.twig', [
+            'form' => $form->createView(),
+            'site' => "settings",
+        ]);
+
+    }
 }
