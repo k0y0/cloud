@@ -1,0 +1,56 @@
+{% extends 'admin.base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>
+                                Id
+                            </th>
+                            <th>
+                                Email
+                            </th>
+                            <th>
+                                Rola
+                            </th>
+                            <th>
+                                Zweryfikowany
+                            </th>
+                            <th>
+                                Statystyka
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.roles[0] }}</td>
+                            <td>{% if user.isVerified == 1 %}Zweryfikowany{% else %}Nie zweryfikowany{% endif %}</td>
+
+                            <td>
+                                <ul class="list-group">
+                                    <li class="list-group-item">Limit: {{ user.diskLimitArr['limit']['number'] }} {{ user.diskLimitArr['limit']['unit'] }}</li>
+                                    <li class="list-group-item">Zajęte: {{ user.diskLimitArr['files']['number'] }} {{ user.diskLimitArr['files']['unit'] }}</li>
+                                    <li class="list-group-item">Pozostało: {{ user.diskLimitArr['left']['number'] }} {{ user.diskLimitArr['left']['unit'] }}</li>
+                                    <li class="list-group-item">Procentowo: {{ user.diskLimitArr['percent'] }}</li>
+
+                                </ul>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
+        </div>
+{% endblock %}

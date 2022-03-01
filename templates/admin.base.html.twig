@@ -25,7 +25,7 @@
                 <ul class="navbar-nav">
                     {% if app.user %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Statystyki</a>
+                            <a class="nav-link" href="{{ path("admin_stats") }}">Przegląd</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path("admin_settings") }}">System</a>

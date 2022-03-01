@@ -55,13 +55,18 @@ class FileUploadController extends AbstractController
                     mkdir($dir.$diskFolderName);
                 }
                 $newPath = $dir.$diskFolderName;
-
+                $fileCounter = 0;
                 foreach ($files as $file){
                     /** @var UploadedFile $file */
                     $en = new File();
 
                     $en->setFilename($file->getClientOriginalName());
                     $en->setFilesize($file->getSize());
+
+                    if($file->guessExtension() === null){
+                        $this->addFlash("message", "Plik który próbujesz przesłać posiada złe rozszerzenie!");
+                        break;
+                    }
                     $en->setMimeType($file->guessExtension());
 
                     $en->setOwner($user);
@@ -93,8 +98,17 @@ class FileUploadController extends AbstractController
                     }
                     $manager->persist($en);
                     $manager->flush();
+                    $fileCounter++;
                 }
-                $this->addFlash("message", "Pomyślnie przesłano plik");
+                if($fileCounter != 0 ){
+                    if($fileCounter === 1){
+                        $this->addFlash("message", "Pomyślnie przesłano plik");
+                    }else if($fileCounter <= 4){
+                        $this->addFlash("message", "Pomyślnie przesłano $fileCounter pliki");
+                    }else{
+                        $this->addFlash("message", "Pomyślnie przesłano $fileCounter plików");
+                    }
+                }
                 return $this->redirectToRoute('dashboard');
             }
         }

@@ -13,6 +13,7 @@ class SettingFixtures extends Fixture
         array("name" => "system_maintenance" , "value" => "false"), // false means not in maintenance mode
         array("name" => "default_user_disk_limit" , "value" => 1073741824 ), //every user should have 1gb of "free" space
         array("name" => "custom_files_dir" , "value" => null ), //custom file store directory
+        array("name" => "presentation_mode" , "value" => true ), //presentation mode for me
     );
 
     public function load(ObjectManager $manager): void

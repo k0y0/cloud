@@ -1,0 +1,22 @@
+{% extends 'admin.base.html.twig' %}
+
+{% block title %}Hello AdminController!{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="d-flex flex-wrap">
+
+        {% for setting in settings %}
+                <div class="card m-5">
+                    <div class="card-header">
+                        {{ setting.settingName }}
+                    </div>
+                    <div class="card-body">
+                        {{ setting.settingValue }}
+                    </div>
+                </div>
+        {% endfor %}
+        </div>
+
+    </div>
+{% endblock %}

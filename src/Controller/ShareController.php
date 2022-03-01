@@ -31,4 +31,5 @@ class ShareController extends AbstractController
 
         ]);
     }
+
 }

@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use App\Helper\SizesHelper;
 use App\Repository\UserRepository;
+use App\Service\UsedSpaceChecker;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -68,6 +70,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\OneToMany(targetEntity=Package::class, mappedBy="ownerId", orphanRemoval=true)
      */
     private $packages;
+
+    private $diskLimitHuman;
 
     public function __construct()
     {
@@ -305,5 +309,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+
+    public function getDiskLimitArr(): ?array
+    {
+        $t = new UsedSpaceChecker();
+        return $t->getUsedSpace($this);
     }
 }
