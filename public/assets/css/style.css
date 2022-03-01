@@ -1,0 +1,11 @@
+.file-box {
+    width: 20%;
+    margin:15px;
+    padding: 15px;
+    border: 1px solid black;
+    font-size: 70%
+}
+
+.selected {
+    background: rgba(0,200,0,0.2);
+}

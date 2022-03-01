@@ -5,36 +5,181 @@
 {% block body %}
     <div class="container">
         <div>
-            <h1>paczki z plikami</h1>
+            <h1>Paczki z plikami</h1>
+            <a class="btn btn-success" href="{{ path("packagesCreate") }}">Nowa paczka</a>
             {% for package in packages %}
-                <div class="card">
-                    <div class="card-header">
-                        <h2>link do paczki: <a href="{{ path("openShare", {"uId" : package.shareLink.uid} ) }}">przejdź</a></h2>
+                <div class="card mt-2" data-package-container="{{ package.id }}">
+                    <div class="card-header d-flex">
+                    {% if package.isShared == 1 %}
+                        <h4 class="mx-2">link do paczki:  </h4>
+                        <a class="mx-2 btn btn-primary" href="{{ path("openShare", {"uId" : package.shareLink.uid} ) }}">Zobacz</a>
+                        <a class="mx-2 btn btn-warning" href="{{ path("packageShare", {"pId": package.id}) }}">Przestań udostępniać</a>
+                    {% else %}
+                        <h4>Paczka nie udostępniona. </h4>
+                        <a class="btn btn-outline-success" href="{{ path("packageShare", {"pId": package.id}) }}">Udostępnij</a>
+                    {% endif %}
+                        <div>
+                            <button class="btn btn-secondary" data-package="{{ package.id }}">+</button>
+                            <button class="btn btn-danger" data-package-delete="{{ package.id }}">delete</button>
 
+                        </div>
                     </div>
                     <div class="card-body">
+                        {% if package.files is empty and package.folders is empty %}
+                            <div>Paczka jest pusta, zacznij od dodawania plików</div>
+                        {% else %}
 
-                {% for file in package.files %}
-                    <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark" viewBox="0 0 16 16">
-                            <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
-                        </svg>
-                        {{ file.filename }}
-                    </div>
-                {% endfor %}
-                {% for folder in package.folders %}
-                    <div>
-                        <a href="{{ path("folder", {"id" : folder.id}) }}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder" viewBox="0 0 16 16">
-                                <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"/>
-                            </svg>
-                            {{ folder.folderName }}
-                        </a>
-                    </div>
-                {% endfor %}
+                        {% for file in package.files %}
+                            <div class="file" data-file="{{ file.id }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark" viewBox="0 0 16 16">
+                                    <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
+                                </svg>
+                                {{ file.filename }}
+                            </div>
+                        {% endfor %}
+                        {% for folder in package.folders %}
+                            <div>
+                                <a href="{{ path("folder", {"id" : folder.id}) }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder" viewBox="0 0 16 16">
+                                        <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31zM2.19 4a1 1 0 0 0-.996 1.09l.637 7a1 1 0 0 0 .995.91h10.348a1 1 0 0 0 .995-.91l.637-7A1 1 0 0 0 13.81 4H2.19zm4.69-1.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707z"/>
+                                    </svg>
+                                    {{ folder.folderName }}
+                                </a>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
         </div>
     </div>
+    <template id="modal-content">
+        <div class="d-flex flex-wrap justify-content-evenly">
+            {% for file in files %}
+                <div data-file="{{ file.id }}" class="file-box" >
+                    <span style="word-break: break-word">{{ file.filename }}</span>
+                </div>
+            {% endfor %}
+        </div>
+    </template>
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function (){
+            const modal = document.querySelector("#modal");
+            const buttons = document.querySelectorAll("[data-package]");
+            const files = document.querySelector("#modal-content");
+            const sendBtn = document.querySelector("[data-send]");
+
+
+            var packageId = null;
+
+            var selections = [];
+            var selectionsBefore = [];
+            for(let i=0; i< buttons.length; i++){
+
+                selections = [];
+                buttons[i].addEventListener("click", function (){
+                    packageId = buttons[i].getAttribute("data-package");
+
+                    let packageContainer = document.querySelector('[data-package-container="'+packageId+'"]');
+                    let packageFiles = packageContainer.querySelectorAll('.file');
+
+                    for( let i = 0; i< packageFiles.length ; i++){
+                        selections.push({id: packageFiles[i].getAttribute("data-file")});
+                        selectionsBefore.push({id: packageFiles[i].getAttribute("data-file")});
+                    }
+                    modal.querySelector(".modal-title").innerHTML = "Dodaj lub usuń pliki";
+                    let modalBody = files.content.cloneNode(true);
+                    let items = modalBody.querySelectorAll("[data-file]");
+
+                    for(let i=0; i<items.length; i++){
+                        for(let e = 0; e< selections.length; e++){
+                            if(selections[e].id === items[i].getAttribute("data-file")){
+                                items[i].classList.add("selected");
+                            }
+                        }
+                        items[i].addEventListener("click", function (){
+                            let item = items[i].getAttribute("data-file");
+                            let stat = false;
+
+                            for (let i = 0; i< selections.length; i++){
+                                if( selections[i].id === item){
+                                    selections.splice(i,1);
+                                    stat = true;
+                                }
+                            }
+                            if(stat === false){
+                                selections.push({id : item});
+                                items[i].classList.add("selected");
+                            }else{
+
+                                items[i].classList.remove("selected");
+                            }
+
+                        });
+                    }
+                    modal.querySelector(".modal-body").appendChild(modalBody);
+
+                    modal.style.display = "block";
+                });
+            }
+
+            sendBtn.addEventListener("click", function (){
+
+                console.log(selections);
+                console.log(selectionsBefore);
+                let status = false;
+                if(selections.length < selectionsBefore.length || selections.length > selectionsBefore.length){
+                    status = true;
+                }else{
+                    for(let i = 0; i< selections.length; i++){
+                        if(status === true){
+                            break;
+                        }
+                        for(let a = 0; a< selectionsBefore.length; a++) {
+                            var p = true;
+                            if(selections[i].id === selectionsBefore[a].id){
+                                p = false;
+                                break;
+                            }
+                        }
+                        if(p){
+                            status = true;
+                            break;
+                        }
+
+                    }
+                }
+                console.log(status);
+                if(status){
+                    let url = '{{ path("packageUpdate", {"id" : "packageId"}) }}';
+                    fetch(url.replace("packageId", packageId), {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(selections),
+                    }).then(res => window.location.reload());
+                }else{
+                    alert("nie wybrano plików");
+                }
+            })
+
+
+            const btnDelete = document.querySelectorAll("[data-package-delete]");
+
+            for (let i=0; i< btnDelete.length; i++){
+                btnDelete[i].addEventListener("click", function (){
+                    if (confirm("Czy napewno usunąć?") === true) {
+                        let id = btnDelete[i].getAttribute("data-package-delete");
+                        let url = '{{ path("packageRemove", {"pId" : "packageId"}) }}';
+                        fetch(url.replace("packageId", id)).then(res => window.location.reload());
+                    }
+                });
+            }
+
+        })
+    </script>
 {% endblock %}

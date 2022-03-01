@@ -173,10 +173,13 @@ class DashboardController extends AbstractController
         //first - get user used space array.
         $userSpace = $usc->getUsedSpace($user);
         //loop through items, keep shared
-
+        $files = $user->getFiles();
+        $folders = $user->getFolders();
         return $this->render('dashboard/shares.html.twig', [
             'userSpaceInfo' => $userSpace,
             'packages' =>  $packages,
+            'files' => $files,
+            'folders' => $folders,
             'site' => "shares",
         ]);
     }
