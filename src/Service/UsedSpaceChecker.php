@@ -34,6 +34,7 @@ class UsedSpaceChecker
             "limit"   => SizesHelper::getOptimalSize($limit),
             "files"   => SizesHelper::getOptimalSize($allFilesSize),
             "left"   => SizesHelper::getOptimalSize($spaceLeft),
+            "leftRaw" => $spaceLeft,
             "percent" => $percent,
             "display" => $display
         );

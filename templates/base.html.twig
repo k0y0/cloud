@@ -58,7 +58,7 @@
     </div>
     {% if userSpaceInfo is defined  %}
         {% if userSpaceInfo.display %}
-        <div id="info">
+        <div id="info" class="container">
             <span>Wolna przestrzeń: </span>
             <span>{{ userSpaceInfo.left.number|round(2)}}{{ userSpaceInfo.left.unit  }}</span>
             <div class="progress">

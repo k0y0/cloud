@@ -6,6 +6,8 @@ use App\Entity\File;
 use App\Entity\Folder;
 use App\Entity\Setting;
 use App\Form\FileUploadType;
+use App\Helper\SizesHelper;
+use App\Service\UsedSpaceChecker;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -56,7 +58,14 @@ class FileUploadController extends AbstractController
                 }
                 $newPath = $dir.$diskFolderName;
                 $fileCounter = 0;
+                $usc = new UsedSpaceChecker();
+                $spaceLeft = $usc->getUsedSpace($user)['leftRaw'];
                 foreach ($files as $file){
+                    if($spaceLeft < $file->getSize()){
+                        $this->addFlash("message", "Brak dostępnego miejsca.");
+                        break;
+                    }
+                    $spaceLeft = $spaceLeft - $file->getSize();
                     /** @var UploadedFile $file */
                     $en = new File();
 
@@ -68,7 +77,6 @@ class FileUploadController extends AbstractController
                         break;
                     }
                     $en->setMimeType($file->guessExtension());
-
                     $en->setOwner($user);
                     $en->setIsShared(false);
 
@@ -97,9 +105,9 @@ class FileUploadController extends AbstractController
                         }
                     }
                     $manager->persist($en);
-                    $manager->flush();
                     $fileCounter++;
                 }
+                $manager->flush();
                 if($fileCounter != 0 ){
                     if($fileCounter === 1){
                         $this->addFlash("message", "Pomyślnie przesłano plik");

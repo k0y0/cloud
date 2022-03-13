@@ -195,4 +195,41 @@ class PackagesController extends AbstractController
 
     }
 
+    /**
+     * @Route("/packages/{pId}/download", name="downloadPackage")
+     */
+    public function downloadPackage($pId): Response
+    {
+        if(!ctype_digit($pId)){
+            return new Response("", "400");
+        }
+        $em = $this->getDoctrine()->getManager();
+        $package = $em->getRepository(Package::class)->find($pId);
+        /** @var $package Package */
+
+        if($package->getOwnerId() !== $this->getUser()){
+            return $this->redirectToRoute("shares");
+        }
+
+        $files = $package->getFiles();
+
+        $zip = new \ZipArchive();
+        $zipName = date("Y-M-d")."-paczka.zip";
+        $zip->open($zipName, \ZipArchive::CREATE);
+        foreach ($files as $file){
+            $zip->addFile($file->getPath(), $file->getFilename());
+        }
+        $zip->close();
+
+        $response = new Response(file_get_contents($zipName));
+
+        $response->headers->set('Content-Type', 'application.zip');
+        $response->headers->set('Content-Disposition', 'attachment;filename="' . $zipName . '"');
+        $response->headers->set('Content-length', filesize($zipName));
+
+        @unlink($zipName);
+
+        return $response;
+    }
+
 }
