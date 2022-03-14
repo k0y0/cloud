@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FileUploadController extends AbstractController
 {
-    private const FILES_DEFAULT_DIR = __DIR__."\\..\\..\\files\\";
+    private const FILES_DEFAULT_DIR = __DIR__."/../../files\\";
 
     /**
      * @Route("/action/upload", name="upload")
@@ -89,6 +89,7 @@ class FileUploadController extends AbstractController
                     $file->move($newPath , $filename.".".$file->getClientOriginalExtension());
 
                     $realpath = realpath($newPath."\\".$filename.".".$file->getClientOriginalExtension());
+                    $realpath = $newPath."/".$filename.".".$file->getClientOriginalExtension();
 
                     $en->setPath($realpath);
                     $en->setIsFavourite(false);
